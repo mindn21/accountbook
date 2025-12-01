@@ -2498,16 +2498,11 @@
         syncBtn.disabled = true;
 
         try {
-          // 즉시 Supabase에 업로드 (debounce 우회)
-          console.log('📤 Supabase에 데이터 저장 중...');
-          await saveToSupabase();
-          console.log('✅ 저장 완료');
-
-          // Supabase 데이터를 로컬로 다운로드
-          console.log('📥 Supabase에서 데이터 불러오는 중...');
+          // Supabase에서 최신 데이터 가져오기
+          console.log('📥 Supabase에서 최신 데이터 불러오는 중...');
           await loadFromSupabase();
           console.log('✅ 로드 완료');
-          console.log('로드 후 거래 수:', state.transactions.length);
+          console.log('동기화 후 거래 수:', state.transactions.length);
 
           // 화면 갱신
           renderAll();
