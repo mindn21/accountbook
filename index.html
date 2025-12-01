@@ -2329,6 +2329,24 @@
     // 초기화
     // ============================================
     document.addEventListener('DOMContentLoaded', async () => {
+      // Supabase 자동 연결
+      const defaultSupabaseUrl = 'https://zmnzfeicabvquwbxgjwt.supabase.co';
+      const defaultSupabaseKey = 'sb_publishable_EUBiU6pKPHdimu-roGXrag_CK9rWVdm';
+
+      if (defaultSupabaseUrl && defaultSupabaseKey && typeof supabase !== 'undefined') {
+        try {
+          state.supabaseClient = supabase.createClient(defaultSupabaseUrl, defaultSupabaseKey);
+          state.useLocalStorage = false;
+          document.getElementById('connectionStatus').textContent = 'Supabase 연결됨 (자동 동기화)';
+          document.getElementById('connectionStatus').className = 'connection-status connected';
+          document.getElementById('syncData').style.display = 'block';
+          document.getElementById('autoSyncInfo').style.display = 'block';
+          console.log('✅ Supabase 자동 연결 완료');
+        } catch (error) {
+          console.error('Supabase 자동 연결 실패:', error);
+        }
+      }
+
       // 앱 시작 시 데이터 로드 (Supabase 연결 시 최신 데이터 자동 가져오기)
       await loadData();
       renderAll();
