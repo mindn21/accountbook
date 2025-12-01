@@ -1441,26 +1441,40 @@
         };
 
         // 기존 데이터 확인
-        const { data: existing } = await state.supabaseClient
+        const { data: existing, error: selectError } = await state.supabaseClient
           .from('household_data')
           .select('id')
-          .limit(1)
-          .single();
+          .limit(1);
 
-        if (existing) {
-          // 업데이트
-          await state.supabaseClient
-            .from('household_data')
-            .update(data)
-            .eq('id', existing.id);
-        } else {
-          // 삽입
-          await state.supabaseClient
-            .from('household_data')
-            .insert([data]);
+        if (selectError) {
+          console.error('Supabase 조회 실패:', selectError);
+          return;
         }
 
-        console.log('Supabase 자동 저장 완료');
+        if (existing && existing.length > 0) {
+          // 업데이트
+          const { error: updateError } = await state.supabaseClient
+            .from('household_data')
+            .update(data)
+            .eq('id', existing[0].id);
+
+          if (updateError) {
+            console.error('Supabase 업데이트 실패:', updateError);
+          } else {
+            console.log('✅ Supabase 자동 저장 완료 (업데이트)');
+          }
+        } else {
+          // 삽입
+          const { error: insertError } = await state.supabaseClient
+            .from('household_data')
+            .insert([data]);
+
+          if (insertError) {
+            console.error('Supabase 삽입 실패:', insertError);
+          } else {
+            console.log('✅ Supabase 자동 저장 완료 (신규)');
+          }
+        }
       } catch (error) {
         console.error('Supabase 저장 실패:', error);
       }
@@ -1503,23 +1517,28 @@
           .from('household_data')
           .select('*')
           .order('updated_at', { ascending: false })
-          .limit(1)
-          .single();
+          .limit(1);
 
-        if (error) throw error;
+        if (error) {
+          console.error('Supabase 로드 실패:', error);
+          return;
+        }
 
-        if (data) {
-          state.users = data.users || state.users;
-          state.paymentMethods = data.paymentMethods || state.paymentMethods;
-          state.assets = data.assets || state.assets;
-          state.categories = data.categories || state.categories;
-          state.transactions = data.transactions || [];
-          state.monthlyBudget = data.monthlyBudget || 0;
-          state.categoryBudgets = data.categoryBudgets || {};
+        if (data && data.length > 0) {
+          const loadedData = data[0];
+          state.users = loadedData.users || state.users;
+          state.paymentMethods = loadedData.paymentMethods || state.paymentMethods;
+          state.assets = loadedData.assets || state.assets;
+          state.categories = loadedData.categories || state.categories;
+          state.transactions = loadedData.transactions || [];
+          state.monthlyBudget = loadedData.monthlyBudget || 0;
+          state.categoryBudgets = loadedData.categoryBudgets || {};
 
           // 로컬에도 저장
           saveLocalData();
-          console.log('Supabase 데이터 로드 완료');
+          console.log('✅ Supabase 데이터 로드 완료');
+        } else {
+          console.log('ℹ️ Supabase에 저장된 데이터가 없습니다');
         }
       } catch (error) {
         console.error('Supabase 로드 실패:', error);
