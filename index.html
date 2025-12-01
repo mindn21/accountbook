@@ -37,7 +37,9 @@
     }
 
     body {
-      font-family: -apple-system, BlinkMacSystemFont, "Apple SD Gothic Neo", "Pretendard", "Segoe UI", Roboto, sans-serif;
+      font-family: -apple-system, BlinkMacSystemFont, "Apple SD Gothic Neo", "Malgun Gothic", "Pretendard", "Segoe UI", Roboto, sans-serif;
+      -webkit-font-smoothing: antialiased;
+      -moz-osx-font-smoothing: grayscale;
       background: var(--gray-50);
       overscroll-behavior: none;
       -webkit-overflow-scrolling: touch;
@@ -57,8 +59,9 @@
     /* 헤더 */
     .header {
       background: white;
-      padding: max(20px, env(safe-area-inset-top)) 20px 16px;
+      padding: max(20px, env(safe-area-inset-top)) 8px 16px;
       border-bottom: 1px solid var(--gray-100);
+      box-shadow: 0 1px 3px rgba(0,0,0,0.05);
     }
 
     .header h1 {
@@ -67,12 +70,14 @@
       color: var(--gray-900);
       margin-bottom: 16px;
       letter-spacing: -0.5px;
+      padding: 0 12px;
     }
 
     .month-selector {
       display: flex;
       justify-content: space-between;
       align-items: center;
+      padding: 0 12px;
     }
 
     .month-selector button {
@@ -101,35 +106,34 @@
     /* 요약 카드 */
     .summary {
       background: white;
-      margin: 12px 20px;
-      border-radius: 16px;
-      padding: 24px 20px;
-      border: 1px solid var(--gray-100);
+      margin: 0;
+      padding: 12px 8px;
+      border-bottom: 1px solid var(--gray-100);
+      box-shadow: 0 1px 3px rgba(0,0,0,0.05);
     }
 
     .summary-row {
       display: flex;
-      justify-content: space-between;
+      justify-content: space-around;
       align-items: center;
-      margin-bottom: 16px;
     }
 
-    .summary-row:last-child {
-      margin-bottom: 0;
-      padding-top: 16px;
-      border-top: 1px solid var(--gray-100);
+    .summary-item {
+      text-align: center;
+      flex: 1;
     }
 
     .summary-label {
       color: var(--gray-600);
-      font-size: 15px;
-      font-weight: 500;
+      font-size: 11px;
+      font-weight: 600;
+      margin-bottom: 4px;
     }
 
     .summary-value {
-      font-size: 20px;
+      font-size: 14px;
       font-weight: 700;
-      letter-spacing: -0.5px;
+      letter-spacing: -0.3px;
     }
 
     .summary-value.income {
@@ -161,10 +165,10 @@
     /* 달력 */
     .calendar {
       background: white;
-      margin: 12px 20px;
-      border-radius: 16px;
-      padding: 20px 16px;
-      border: 1px solid var(--gray-100);
+      margin: 8px 0 0;
+      padding: 16px 8px;
+      border-bottom: 1px solid var(--gray-100);
+      box-shadow: 0 2px 4px rgba(0,0,0,0.05);
     }
 
     .calendar-grid {
@@ -219,12 +223,20 @@
       color: white;
     }
 
-    .calendar-day.today .calendar-day-number {
+    .calendar-day.selected {
+      background: var(--primary-dark);
+      color: white;
+    }
+
+    .calendar-day.today .calendar-day-number,
+    .calendar-day.selected .calendar-day-number {
       color: white;
     }
 
     .calendar-day.today .calendar-day-income,
-    .calendar-day.today .calendar-day-expense {
+    .calendar-day.today .calendar-day-expense,
+    .calendar-day.selected .calendar-day-income,
+    .calendar-day.selected .calendar-day-expense {
       color: white;
       opacity: 0.9;
     }
@@ -258,9 +270,32 @@
       white-space: nowrap;
     }
 
+    /* 달력 하단 선택된 날짜의 거래 내역 */
+    .calendar-selected-transactions {
+      background: white;
+      margin: 0;
+      padding: 16px 8px;
+      border-bottom: 1px solid var(--gray-100);
+      min-height: 100px;
+      box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+    }
+
+    .calendar-selected-date {
+      font-size: 15px;
+      font-weight: 700;
+      color: var(--gray-900);
+      margin-bottom: 12px;
+      padding: 0 8px;
+    }
+
+    .calendar-transaction-list {
+      max-height: 300px;
+      overflow-y: auto;
+    }
+
     /* 거래 내역 리스트 */
     .transaction-list {
-      padding: 0 20px;
+      padding: 0 8px;
     }
 
     .transaction-date-group {
@@ -286,6 +321,7 @@
       cursor: pointer;
       transition: transform 0.2s;
       border: 1px solid var(--gray-100);
+      box-shadow: 0 1px 3px rgba(0,0,0,0.05);
     }
 
     .transaction-item:active {
@@ -344,7 +380,7 @@
       background: white;
       border-radius: 16px;
       padding: 24px 20px;
-      margin: 0 20px 12px;
+      margin: 0 8px 12px;
       border: 1px solid var(--gray-100);
     }
 
@@ -367,7 +403,7 @@
       background: white;
       border-radius: 16px;
       padding: 24px 20px;
-      margin: 0 20px 12px;
+      margin: 0 8px 12px;
       border: 1px solid var(--gray-100);
     }
 
@@ -474,7 +510,8 @@
       padding: 20px;
       border-radius: 12px;
       border: 1px solid var(--gray-200);
-      margin-bottom: 16px;
+      margin: 0 8px 16px;
+      box-shadow: 0 1px 3px rgba(0,0,0,0.05);
     }
 
     .budget-header {
@@ -526,7 +563,7 @@
 
     /* 검색바 */
     .search-bar {
-      margin: 12px 20px;
+      margin: 12px 8px;
     }
 
     .search-input {
@@ -536,6 +573,7 @@
       border-radius: 12px;
       font-size: 15px;
       background: white;
+      box-shadow: 0 1px 3px rgba(0,0,0,0.05);
     }
 
     .search-input:focus {
@@ -556,6 +594,7 @@
       z-index: 100;
       max-width: 480px;
       margin: 0 auto;
+      box-shadow: 0 -2px 8px rgba(0,0,0,0.05);
     }
 
     .nav-item {
@@ -715,6 +754,34 @@
       background: white;
     }
 
+    /* 금액 입력 개선 */
+    .amount-input-wrapper {
+      position: relative;
+      display: flex;
+      gap: 8px;
+    }
+
+    .amount-input-wrapper .form-input {
+      flex: 1;
+    }
+
+    .reset-amount-btn {
+      padding: 14px 20px;
+      background: var(--gray-100);
+      border: 1px solid var(--gray-200);
+      border-radius: 12px;
+      font-size: 14px;
+      font-weight: 600;
+      color: var(--gray-700);
+      cursor: pointer;
+      transition: all 0.2s;
+      white-space: nowrap;
+    }
+
+    .reset-amount-btn:active {
+      background: var(--gray-200);
+    }
+
     /* 금액 입력 */
     .quick-amount-buttons {
       display: grid;
@@ -743,13 +810,13 @@
     /* 선택 그리드 */
     .select-grid {
       display: grid;
-      grid-template-columns: repeat(3, 1fr);
+      grid-template-columns: repeat(4, 1fr);
       gap: 8px;
     }
 
     .select-item {
       padding: 14px 12px;
-      background: var(--gray-50);
+      background: var(--gray-100);
       border: 1.5px solid var(--gray-200);
       border-radius: 10px;
       text-align: center;
@@ -819,7 +886,7 @@
     .filter-buttons {
       display: flex;
       gap: 8px;
-      margin: 12px 20px;
+      margin: 12px 8px;
       overflow-x: auto;
       padding-bottom: 4px;
     }
@@ -856,7 +923,7 @@
       background: white;
       border-radius: 16px;
       padding: 20px;
-      margin: 0 20px 12px;
+      margin: 0 8px 12px;
       border: 1px solid var(--gray-100);
     }
 
@@ -937,7 +1004,7 @@
       background: var(--gray-100);
       color: var(--gray-600);
       border-radius: 12px;
-      margin: 0 20px 12px;
+      margin: 0 8px 12px;
     }
 
     .connection-status.connected {
@@ -964,19 +1031,21 @@
       </div>
     </div>
 
-    <!-- 요약 -->
+    <!-- 요약 (한 줄로 얇게) -->
     <div class="summary">
       <div class="summary-row">
-        <span class="summary-label">수입</span>
-        <span class="summary-value income" id="totalIncome">0원</span>
-      </div>
-      <div class="summary-row">
-        <span class="summary-label">지출</span>
-        <span class="summary-value expense" id="totalExpense">0원</span>
-      </div>
-      <div class="summary-row">
-        <span class="summary-label">잔액</span>
-        <span class="summary-value balance" id="totalBalance">0원</span>
+        <div class="summary-item">
+          <div class="summary-label">수입</div>
+          <div class="summary-value income" id="totalIncome">0원</div>
+        </div>
+        <div class="summary-item">
+          <div class="summary-label">지출</div>
+          <div class="summary-value expense" id="totalExpense">0원</div>
+        </div>
+        <div class="summary-item">
+          <div class="summary-label">잔액</div>
+          <div class="summary-value balance" id="totalBalance">0원</div>
+        </div>
       </div>
     </div>
 
@@ -984,38 +1053,31 @@
     <div class="content">
       <!-- 달력 탭 -->
       <div class="tab-content active" id="calendar-content">
-        <!-- 대시보드 -->
-        <div class="dashboard">
-          <div class="summary-cards">
-            <div class="summary-card">
-              <div class="summary-card-label">수입</div>
-              <div class="summary-card-value income" id="monthIncome">0원</div>
-            </div>
-            <div class="summary-card">
-              <div class="summary-card-label">지출</div>
-              <div class="summary-card-value expense" id="monthExpense">0원</div>
-            </div>
-            <div class="summary-card">
-              <div class="summary-card-label">잔액</div>
-              <div class="summary-card-value" id="monthBalance">0원</div>
-            </div>
-          </div>
+        <!-- 달력 -->
+        <div class="calendar">
+          <div class="calendar-grid" id="calendarGrid"></div>
+        </div>
 
-          <!-- 월간 예산 -->
-          <div class="budget-card" id="monthlyBudgetCard" style="display: none;">
-            <div class="budget-header">
-              <span class="budget-title">월간 예산</span>
-              <span class="budget-amount"><span id="budgetSpent">0원</span> / <span id="budgetTotal">0원</span></span>
+        <!-- 선택된 날짜의 거래 내역 -->
+        <div class="calendar-selected-transactions" id="calendarSelectedTransactions">
+          <div class="calendar-selected-date" id="calendarSelectedDate">오늘</div>
+          <div class="calendar-transaction-list" id="calendarTransactionList">
+            <div class="empty-state">
+              <div class="empty-state-text">날짜를 선택하면 거래 내역이 표시됩니다</div>
             </div>
-            <div class="budget-progress">
-              <div class="budget-progress-fill" id="budgetProgressBar"></div>
-            </div>
-            <div class="budget-percent" id="budgetPercent">0%</div>
           </div>
         </div>
 
-        <div class="calendar">
-          <div class="calendar-grid" id="calendarGrid"></div>
+        <!-- 월간 예산 카드 -->
+        <div class="budget-card" id="monthlyBudgetCard" style="display: none;">
+          <div class="budget-header">
+            <span class="budget-title">월간 예산</span>
+            <span class="budget-amount"><span id="budgetSpent">0원</span> / <span id="budgetTotal">0원</span></span>
+          </div>
+          <div class="budget-progress">
+            <div class="budget-progress-fill" id="budgetProgressBar"></div>
+          </div>
+          <div class="budget-percent" id="budgetPercent">0%</div>
         </div>
       </div>
 
@@ -1036,7 +1098,7 @@
       <!-- 자산 탭 -->
       <div class="tab-content" id="assets-content">
         <div id="assetsList"></div>
-        <div style="padding: 0 20px;">
+        <div style="padding: 0 8px;">
           <button class="btn btn-secondary" id="transferAssetBtn">자산 이동</button>
         </div>
       </div>
@@ -1165,7 +1227,7 @@
 
   <!-- 거래 추가 모달 -->
   <div class="modal-overlay" id="transactionModal">
-    <div class="modal">
+    <div class="modal" id="transactionModalContent">
       <div class="modal-header">
         <h2 class="modal-title">거래 추가</h2>
         <button class="modal-close" onclick="closeModal('transactionModal')">&times;</button>
@@ -1186,7 +1248,10 @@
 
       <div class="form-group">
         <label class="form-label">금액</label>
-        <input type="number" class="form-input" id="amountInput" placeholder="금액 입력">
+        <div class="amount-input-wrapper">
+          <input type="text" inputmode="numeric" class="form-input" id="amountInput" placeholder="금액 입력">
+          <button class="reset-amount-btn" id="resetAmountBtn">초기화</button>
+        </div>
         <div class="quick-amount-buttons">
           <button class="quick-amount-btn" data-amount="100000">+10만</button>
           <button class="quick-amount-btn" data-amount="10000">+1만</button>
@@ -1246,7 +1311,10 @@
 
       <div class="form-group">
         <label class="form-label">금액</label>
-        <input type="number" class="form-input" id="transferAmountInput" placeholder="이동할 금액">
+        <div class="amount-input-wrapper">
+          <input type="text" inputmode="numeric" class="form-input" id="transferAmountInput" placeholder="이동할 금액">
+          <button class="reset-amount-btn" id="resetTransferAmountBtn">초기화</button>
+        </div>
         <div class="quick-amount-buttons">
           <button class="quick-amount-btn" data-target="transfer" data-amount="100000">+10만</button>
           <button class="quick-amount-btn" data-target="transfer" data-amount="10000">+1만</button>
@@ -1270,6 +1338,7 @@
     // ============================================
     let state = {
       currentDate: new Date(),
+      selectedDate: formatDate(new Date()), // 선택된 날짜 추가
       selectedUser: null,
       selectedType: 'expense',
       selectedCategory: null,
@@ -1337,6 +1406,18 @@
     // ============================================
     // 유틸리티 함수
     // ============================================
+
+    // 숫자에 천 단위 쉼표 추가
+    function formatNumber(num) {
+      const numStr = String(num).replace(/[^\d]/g, '');
+      if (!numStr) return '';
+      return new Intl.NumberFormat('ko-KR').format(parseInt(numStr));
+    }
+
+    // 쉼표가 포함된 문자열을 숫자로 변환
+    function parseFormattedNumber(str) {
+      return parseInt(String(str).replace(/[^\d]/g, '')) || 0;
+    }
 
     // Debounce 함수 (연속 호출 방지)
     function debounce(func, wait) {
@@ -1584,6 +1665,28 @@
       document.getElementById('totalIncome').textContent = formatMoney(income);
       document.getElementById('totalExpense').textContent = formatMoney(expense);
       document.getElementById('totalBalance').textContent = formatMoney(balance);
+
+      // 예산 진행률
+      if (state.monthlyBudget > 0) {
+        document.getElementById('monthlyBudgetCard').style.display = 'block';
+        document.getElementById('budgetSpent').textContent = formatMoney(expense);
+        document.getElementById('budgetTotal').textContent = formatMoney(state.monthlyBudget);
+
+        const percent = Math.min((expense / state.monthlyBudget) * 100, 100);
+        document.getElementById('budgetPercent').textContent = `${percent.toFixed(1)}%`;
+
+        const progressBar = document.getElementById('budgetProgressBar');
+        progressBar.style.width = `${percent}%`;
+
+        progressBar.classList.remove('warning', 'danger');
+        if (percent >= 100) {
+          progressBar.classList.add('danger');
+        } else if (percent >= 80) {
+          progressBar.classList.add('warning');
+        }
+      } else {
+        document.getElementById('monthlyBudgetCard').style.display = 'none';
+      }
     }
 
     function renderDashboard() {
@@ -1629,21 +1732,17 @@
       const year = state.currentDate.getFullYear();
       const month = state.currentDate.getMonth();
 
-      // 이번 달 첫날과 마지막날
       const firstDay = new Date(year, month, 1);
       const lastDay = new Date(year, month + 1, 0);
 
-      // 달력 시작일 (이전 달 포함)
       const startDay = new Date(firstDay);
       startDay.setDate(startDay.getDate() - firstDay.getDay());
 
-      // 달력 종료일 (다음 달 포함)
       const endDay = new Date(lastDay);
       endDay.setDate(endDay.getDate() + (6 - lastDay.getDay()));
 
       let html = '';
 
-      // 요일 헤더
       const dayHeaders = ['일', '월', '화', '수', '목', '금', '토'];
       dayHeaders.forEach((day, index) => {
         let className = 'calendar-day-header';
@@ -1652,15 +1751,16 @@
         html += `<div class="${className}">${day}</div>`;
       });
 
-      // 날짜 셀
       const current = new Date(startDay);
+      const todayStr = formatDate(new Date());
+
       while (current <= endDay) {
         const dateStr = formatDate(current);
         const isCurrentMonth = current.getMonth() === month;
-        const isToday = formatDate(new Date()) === dateStr;
+        const isToday = todayStr === dateStr;
+        const isSelected = state.selectedDate === dateStr;
         const dayOfWeek = current.getDay();
 
-        // 해당 날짜의 거래 집계
         const dayTransactions = state.transactions.filter(t => t.transactionDate === dateStr);
         const income = dayTransactions.filter(t => t.type === 'income').reduce((sum, t) => sum + t.amount, 0);
         const expense = dayTransactions.filter(t => t.type === 'expense').reduce((sum, t) => sum + t.amount, 0);
@@ -1668,11 +1768,12 @@
         let className = 'calendar-day';
         if (!isCurrentMonth) className += ' other-month';
         if (isToday) className += ' today';
+        if (isSelected) className += ' selected';
         if (dayOfWeek === 0) className += ' sun';
         if (dayOfWeek === 6) className += ' sat';
 
         html += `
-          <div class="${className}" onclick="onCalendarDayClick('${dateStr}')">
+          <div class="${className}" onclick="onCalendarDayClick('${dateStr}')" ondblclick="onCalendarDayDoubleClick('${dateStr}')">
             <div class="calendar-day-number">${current.getDate()}</div>
             ${income > 0 ? `<div class="calendar-day-income">+${formatMoneyShort(income)}</div>` : ''}
             ${expense > 0 ? `<div class="calendar-day-expense">-${formatMoneyShort(expense)}</div>` : ''}
@@ -1686,9 +1787,32 @@
     }
 
     function onCalendarDayClick(dateStr) {
-      // 해당 날짜로 거래 추가 모달 열기
+      state.selectedDate = dateStr;
+      renderCalendar();
+      renderSelectedDateTransactions(dateStr);
+    }
+
+    function onCalendarDayDoubleClick(dateStr) {
       openTransactionModal();
       document.getElementById('dateInput').value = dateStr;
+    }
+
+    function renderSelectedDateTransactions(dateStr) {
+      const dayTransactions = state.transactions.filter(t => t.transactionDate === dateStr);
+
+      document.getElementById('calendarSelectedDate').textContent = formatDateKo(dateStr);
+
+      if (dayTransactions.length === 0) {
+        document.getElementById('calendarTransactionList').innerHTML = `
+          <div class="empty-state">
+            <div class="empty-state-text">이 날짜에 거래 내역이 없습니다</div>
+          </div>
+        `;
+        return;
+      }
+
+      let html = dayTransactions.map(t => renderTransactionItem(t)).join('');
+      document.getElementById('calendarTransactionList').innerHTML = html;
     }
 
     function renderTransactionList() {
@@ -2131,10 +2255,8 @@
       document.getElementById('amountInput').value = '';
       document.getElementById('memoInput').value = '';
 
-      // 날짜가 이미 설정되어 있지 않다면 오늘로 설정
-      if (!document.getElementById('dateInput').value) {
-        document.getElementById('dateInput').value = formatDate(new Date());
-      }
+      // 선택된 날짜로 설정 (없으면 오늘)
+      document.getElementById('dateInput').value = state.selectedDate || formatDate(new Date());
 
       // 사용자 선택 렌더링
       renderSelectGrid('userSelect', state.users, null);
@@ -2171,11 +2293,15 @@
       const assets = [...state.assets].sort((a, b) => a.displayOrder - b.displayOrder);
       renderSelectGrid('assetSelect', assets, null, null, false);
 
+      // 모달 스크롤을 맨 위로
+      const modal = document.getElementById('transactionModalContent');
+      modal.scrollTop = 0;
+
       openModal('transactionModal');
     }
 
     function saveTransaction() {
-      const amount = parseInt(document.getElementById('amountInput').value);
+      const amount = parseFormattedNumber(document.getElementById('amountInput').value);
       const date = document.getElementById('dateInput').value;
       const memo = document.getElementById('memoInput').value;
 
@@ -2201,7 +2327,13 @@
       state.transactions.push(transaction);
       saveData();
       closeModal('transactionModal');
+
+      // 모달 스크롤을 맨 위로
+      const modal = document.getElementById('transactionModalContent');
+      modal.scrollTop = 0;
+
       renderAll();
+      renderSelectedDateTransactions(state.selectedDate);
     }
 
     function openTransferModal() {
@@ -2219,7 +2351,7 @@
     }
 
     function saveTransfer() {
-      const amount = parseInt(document.getElementById('transferAmountInput').value);
+      const amount = parseFormattedNumber(document.getElementById('transferAmountInput').value);
       const date = document.getElementById('transferDateInput').value;
 
       if (!state.selectedFromAsset || !state.selectedToAsset || !amount || !date) {
@@ -2343,7 +2475,6 @@
     function renderAll() {
       updateMonthDisplay();
       updateSummary();
-      renderDashboard();
       renderCalendar();
       renderTransactionList();
       renderAssetsList();
@@ -2372,12 +2503,56 @@
         }
       }
 
-      // 앱 시작 시 데이터 로드 (Supabase 연결 시 최신 데이터 자동 가져오기)
+      // 앱 시작 시 데이터 로드
       await loadData();
       renderAll();
       renderPaymentMethodsSettings();
       renderAssetsSettings();
       renderCategoriesSettings();
+
+      // 오늘 날짜로 초기화하고 거래 내역 표시
+      state.selectedDate = formatDate(new Date());
+      renderSelectedDateTransactions(state.selectedDate);
+
+      // 금액 입력 필드에 실시간 쉼표 추가
+      const amountInput = document.getElementById('amountInput');
+      amountInput.addEventListener('input', (e) => {
+        const cursorPosition = e.target.selectionStart;
+        const oldValue = e.target.value;
+        const oldLength = oldValue.length;
+
+        const formatted = formatNumber(e.target.value);
+        e.target.value = formatted;
+
+        // 커서 위치 조정
+        const newLength = formatted.length;
+        const diff = newLength - oldLength;
+        e.target.setSelectionRange(cursorPosition + diff, cursorPosition + diff);
+      });
+
+      // 자산 이동 금액 입력 필드에도 실시간 쉼표 추가
+      const transferAmountInput = document.getElementById('transferAmountInput');
+      transferAmountInput.addEventListener('input', (e) => {
+        const cursorPosition = e.target.selectionStart;
+        const oldValue = e.target.value;
+        const oldLength = oldValue.length;
+
+        const formatted = formatNumber(e.target.value);
+        e.target.value = formatted;
+
+        const newLength = formatted.length;
+        const diff = newLength - oldLength;
+        e.target.setSelectionRange(cursorPosition + diff, cursorPosition + diff);
+      });
+
+      // 금액 초기화 버튼
+      document.getElementById('resetAmountBtn').addEventListener('click', () => {
+        document.getElementById('amountInput').value = '';
+      });
+
+      document.getElementById('resetTransferAmountBtn').addEventListener('click', () => {
+        document.getElementById('transferAmountInput').value = '';
+      });
 
       // 하단 탭 전환
       document.querySelectorAll('.nav-item').forEach(navItem => {
@@ -2394,6 +2569,7 @@
             renderAssetsList();
           } else if (navItem.dataset.tab === 'calendar') {
             renderCalendar();
+            renderSelectedDateTransactions(state.selectedDate);
           }
         });
       });
@@ -2402,11 +2578,13 @@
       document.getElementById('prevMonth').addEventListener('click', () => {
         state.currentDate.setMonth(state.currentDate.getMonth() - 1);
         renderAll();
+        renderSelectedDateTransactions(state.selectedDate);
       });
 
       document.getElementById('nextMonth').addEventListener('click', () => {
         state.currentDate.setMonth(state.currentDate.getMonth() + 1);
         renderAll();
+        renderSelectedDateTransactions(state.selectedDate);
       });
 
       // 거래 추가
@@ -2425,10 +2603,12 @@
 
           if (target === 'transfer') {
             const input = document.getElementById('transferAmountInput');
-            input.value = (parseInt(input.value) || 0) + amount;
+            const currentAmount = parseFormattedNumber(input.value) || 0;
+            input.value = formatNumber(currentAmount + amount);
           } else {
             const input = document.getElementById('amountInput');
-            input.value = (parseInt(input.value) || 0) + amount;
+            const currentAmount = parseFormattedNumber(input.value) || 0;
+            input.value = formatNumber(currentAmount + amount);
           }
         });
       });
@@ -2464,7 +2644,7 @@
         const budgetInput = document.getElementById('monthlyBudgetInput');
         state.monthlyBudget = parseInt(budgetInput.value) || 0;
         saveData();
-        renderDashboard();
+        updateSummary();
         alert('예산이 저장되었습니다.');
       });
 
