@@ -625,6 +625,8 @@
       background: rgba(0, 0, 0, 0.4);
       z-index: 1000;
       animation: fadeIn 0.2s;
+      overflow-x: hidden;
+      overscroll-behavior-x: none;
     }
 
     .modal-overlay.active {
@@ -651,6 +653,9 @@
       width: 100%;
       max-height: 85vh;
       overflow-y: auto;
+      overflow-x: hidden;
+      overscroll-behavior-x: none;
+      touch-action: pan-y;
       animation: slideUp 0.3s;
     }
 
