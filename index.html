@@ -2490,16 +2490,24 @@
           return;
         }
 
+        console.log('🔄 수동 동기화 시작...');
+        console.log('현재 거래 수:', state.transactions.length);
+
         const syncBtn = document.getElementById('syncData');
         syncBtn.textContent = '🔄 동기화 중...';
         syncBtn.disabled = true;
 
         try {
           // 즉시 Supabase에 업로드 (debounce 우회)
+          console.log('📤 Supabase에 데이터 저장 중...');
           await saveToSupabase();
+          console.log('✅ 저장 완료');
 
           // Supabase 데이터를 로컬로 다운로드
+          console.log('📥 Supabase에서 데이터 불러오는 중...');
           await loadFromSupabase();
+          console.log('✅ 로드 완료');
+          console.log('로드 후 거래 수:', state.transactions.length);
 
           // 화면 갱신
           renderAll();
@@ -2509,7 +2517,7 @@
 
           alert('데이터 동기화가 완료되었습니다.');
         } catch (error) {
-          console.error('동기화 실패:', error);
+          console.error('❌ 동기화 실패:', error);
           alert('동기화에 실패했습니다: ' + error.message);
         } finally {
           syncBtn.textContent = '🔄 수동 동기화';
