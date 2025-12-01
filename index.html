@@ -1431,12 +1431,12 @@
       try {
         const data = {
           users: state.users,
-          paymentMethods: state.paymentMethods,
+          payment_methods: state.paymentMethods,
           assets: state.assets,
           categories: state.categories,
           transactions: state.transactions,
-          monthlyBudget: state.monthlyBudget,
-          categoryBudgets: state.categoryBudgets,
+          monthly_budget: state.monthlyBudget,
+          category_budgets: state.categoryBudgets,
           updated_at: new Date().toISOString()
         };
 
@@ -1527,12 +1527,12 @@
         if (data && data.length > 0) {
           const loadedData = data[0];
           state.users = loadedData.users || state.users;
-          state.paymentMethods = loadedData.paymentMethods || state.paymentMethods;
+          state.paymentMethods = loadedData.payment_methods || state.paymentMethods;
           state.assets = loadedData.assets || state.assets;
           state.categories = loadedData.categories || state.categories;
           state.transactions = loadedData.transactions || [];
-          state.monthlyBudget = loadedData.monthlyBudget || 0;
-          state.categoryBudgets = loadedData.categoryBudgets || {};
+          state.monthlyBudget = loadedData.monthly_budget || 0;
+          state.categoryBudgets = loadedData.category_budgets || {};
 
           // 로컬에도 저장
           saveLocalData();
