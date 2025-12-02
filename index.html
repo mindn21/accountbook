@@ -22,38 +22,44 @@
     }
 
     :root {
-      --primary: #3182F6;
-      --primary-dark: #1B64DA;
-      --success: #0AC569;
-      --danger: #F04452;
-      --warning: #FF8A00;
-      --gray-50: #F9FAFB;
-      --gray-100: #E8EBF0;
-      --gray-200: #E5E8EB;
-      --gray-300: #D1D6DB;
-      --gray-400: #B0B8C1;
-      --gray-500: #8B95A1;
-      --gray-600: #6B7684;
-      --gray-700: #4E5968;
-      --gray-800: #333D4B;
-      --gray-900: #191F28;
+      --primary: #6C5DD3;
+      --primary-dark: #5847C4;
+      --primary-light: #8F7EEB;
+      --success: #00C9A7;
+      --danger: #FF6B6B;
+      --warning: #FFB84D;
+      --gray-50: #FAFBFC;
+      --gray-100: #F3F4F6;
+      --gray-200: #E5E7EB;
+      --gray-300: #D1D5DB;
+      --gray-400: #9CA3AF;
+      --gray-500: #6B7280;
+      --gray-600: #4B5563;
+      --gray-700: #374151;
+      --gray-800: #1F2937;
+      --gray-900: #111827;
+      --shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
+      --shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.1), 0 1px 2px -1px rgba(0, 0, 0, 0.1);
+      --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -2px rgba(0, 0, 0, 0.1);
+      --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -4px rgba(0, 0, 0, 0.1);
     }
 
     body {
-      font-family: 'Montserrat', -apple-system, BlinkMacSystemFont, sans-serif;
+      font-family: 'Montserrat', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
       font-size: 14px;
       -webkit-font-smoothing: antialiased;
       -moz-osx-font-smoothing: grayscale;
-      background: var(--gray-100);
+      background: var(--gray-50);
       overscroll-behavior: none;
       -webkit-overflow-scrolling: touch;
       color: var(--gray-900);
+      line-height: 1.5;
     }
 
     .container {
       max-width: 480px;
       margin: 0 auto;
-      background: var(--gray-100);
+      background: var(--gray-50);
       min-height: 100vh;
       display: flex;
       flex-direction: column;
@@ -62,15 +68,15 @@
 
     /* 헤더 */
     .header {
-      background: white;
-      padding: max(20px, env(safe-area-inset-top)) 16px 16px;
-      box-shadow: 0 1px 3px rgba(0,0,0,0.08);
+      background: linear-gradient(135deg, var(--primary) 0%, var(--primary-dark) 100%);
+      padding: max(24px, env(safe-area-inset-top)) 20px 20px;
+      box-shadow: var(--shadow-md);
     }
 
     .header h1 {
-      font-size: 20px;
+      font-size: 22px;
       font-weight: 700;
-      color: var(--gray-900);
+      color: white;
       margin-bottom: 16px;
       letter-spacing: -0.5px;
     }
@@ -82,9 +88,9 @@
     }
 
     .month-selector button {
-      background: none;
+      background: rgba(255, 255, 255, 0.2);
       border: none;
-      color: var(--gray-700);
+      color: white;
       padding: 8px 12px;
       font-size: 14px;
       font-weight: 600;
@@ -93,46 +99,56 @@
       transition: all 0.2s;
     }
 
+    .month-selector button:hover {
+      background: rgba(255, 255, 255, 0.3);
+    }
+
     .month-selector button:active {
-      background: var(--gray-100);
+      background: rgba(255, 255, 255, 0.4);
+      transform: scale(0.95);
     }
 
     .month-selector span {
-      font-size: 16px;
+      font-size: 18px;
       font-weight: 700;
-      color: var(--gray-900);
+      color: white;
     }
 
     /* 요약 카드 */
     .summary {
       background: white;
       margin: 0;
-      padding: 12px 16px;
-      box-shadow: 0 1px 3px rgba(0,0,0,0.08);
+      padding: 16px 20px;
+      box-shadow: var(--shadow-sm);
+      border-bottom: 1px solid var(--gray-100);
     }
 
     .summary-row {
       display: flex;
       justify-content: space-around;
       align-items: center;
+      gap: 12px;
     }
 
     .summary-item {
       text-align: center;
       flex: 1;
+      padding: 8px 0;
     }
 
     .summary-label {
-      color: var(--gray-600);
-      font-size: 11px;
+      color: var(--gray-500);
+      font-size: 12px;
       font-weight: 600;
-      margin-bottom: 4px;
+      margin-bottom: 6px;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
     }
 
     .summary-value {
-      font-size: 14px;
+      font-size: 16px;
       font-weight: 700;
-      letter-spacing: -0.3px;
+      letter-spacing: -0.5px;
     }
 
     .summary-value.income {
@@ -144,13 +160,21 @@
     }
 
     .summary-value.balance {
-      color: var(--gray-900);
+      color: var(--primary);
     }
 
     /* 콘텐츠 영역 */
     .content {
       flex: 1;
       overflow-y: auto;
+      padding: 0;
+    }
+
+    /* 달력 탭 제외한 탭들의 패딩 */
+    #log-content,
+    #assets-content,
+    #stats-content,
+    #settings-content {
       padding: 16px;
     }
 
@@ -165,77 +189,88 @@
     /* 카드 공통 스타일 */
     .card {
       background: white;
-      border-radius: 12px;
+      border-radius: 16px;
       padding: 20px;
-      margin-bottom: 16px;
-      box-shadow: 0 2px 8px rgba(0,0,0,0.06);
-      transition: all 0.2s;
+      margin-bottom: 12px;
+      box-shadow: var(--shadow);
+      transition: all 0.2s ease;
+      border: 1px solid var(--gray-100);
+    }
+
+    .card:hover {
+      box-shadow: var(--shadow-md);
     }
 
     /* 달력 */
     .calendar {
       background: white;
-      border-radius: 12px;
-      padding: 16px;
-      margin-bottom: 16px;
-      box-shadow: 0 2px 8px rgba(0,0,0,0.06);
+      border-radius: 0;
+      padding: 20px 12px;
+      margin-bottom: 0;
+      box-shadow: var(--shadow-sm);
     }
 
     .calendar-grid {
       display: grid;
       grid-template-columns: repeat(7, 1fr);
-      gap: 4px;
+      gap: 6px;
     }
 
     .calendar-day-header {
       text-align: center;
-      padding: 12px 0 8px;
-      font-size: 12px;
-      color: var(--gray-500);
-      font-weight: 600;
+      padding: 12px 0 10px;
+      font-size: 11px;
+      color: var(--gray-400);
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
     }
 
     .calendar-day-header.sun {
-      color: var(--danger);
+      color: #FF6B6B;
     }
 
     .calendar-day-header.sat {
-      color: var(--primary);
+      color: #6C5DD3;
     }
 
     .calendar-day {
       aspect-ratio: 1;
-      border-radius: 8px;
-      padding: 6px 4px;
+      border-radius: 10px;
+      padding: 8px 4px;
       display: flex;
       flex-direction: column;
       align-items: center;
       justify-content: flex-start;
       cursor: pointer;
-      transition: all 0.2s;
+      transition: all 0.15s ease;
       position: relative;
+      background: transparent;
     }
 
     .calendar-day:hover {
-      background: var(--gray-50);
+      background: var(--gray-100);
+      transform: scale(1.05);
     }
 
     .calendar-day:active {
-      background: var(--gray-100);
+      transform: scale(0.95);
     }
 
     .calendar-day.other-month {
-      opacity: 0.3;
+      opacity: 0.25;
     }
 
     .calendar-day.today {
-      background: var(--primary);
+      background: linear-gradient(135deg, var(--primary) 0%, var(--primary-light) 100%);
       color: white;
+      box-shadow: var(--shadow);
     }
 
     .calendar-day.selected {
-      background: var(--primary-dark);
+      background: linear-gradient(135deg, var(--primary-dark) 0%, var(--primary) 100%);
       color: white;
+      box-shadow: var(--shadow-md);
     }
 
     .calendar-day.today .calendar-day-number,
@@ -246,27 +281,27 @@
     .calendar-day.today .calendar-day-expense,
     .calendar-day.selected .calendar-day-expense {
       color: white;
-      opacity: 0.9;
+      opacity: 0.95;
     }
 
     .calendar-day-number {
-      font-size: 14px;
-      font-weight: 600;
-      margin-bottom: 2px;
+      font-size: 15px;
+      font-weight: 700;
+      margin-bottom: 3px;
       color: var(--gray-900);
     }
 
     .calendar-day.sun .calendar-day-number {
-      color: var(--danger);
+      color: #FF6B6B;
     }
 
     .calendar-day.sat .calendar-day-number {
-      color: var(--primary);
+      color: #6C5DD3;
     }
 
     .calendar-day-expense {
-      font-size: 10px;
-      font-weight: 600;
+      font-size: 9px;
+      font-weight: 700;
       color: var(--danger);
       white-space: nowrap;
     }
@@ -274,9 +309,10 @@
     /* 달력 하단 선택된 날짜의 거래 내역 */
     .calendar-selected-transactions {
       background: white;
-      border-radius: 12px;
-      padding: 20px;
-      margin-bottom: 16px;
+      border-radius: 0;
+      padding: 20px 16px;
+      margin-bottom: 0;
+      margin-top: 8px;
       box-shadow: 0 2px 8px rgba(0,0,0,0.06);
       min-height: 100px;
     }
@@ -297,23 +333,29 @@
     .transaction-list {
       display: flex;
       flex-direction: column;
-      gap: 12px;
+      gap: 10px;
     }
 
     .transaction-item {
       background: white;
-      border-radius: 12px;
-      padding: 16px;
+      border-radius: 14px;
+      padding: 18px;
       display: flex;
       justify-content: space-between;
       align-items: center;
       cursor: pointer;
-      transition: all 0.2s;
-      box-shadow: 0 2px 8px rgba(0,0,0,0.06);
+      transition: all 0.2s ease;
+      box-shadow: var(--shadow);
+      border: 1px solid var(--gray-100);
+    }
+
+    .transaction-item:hover {
+      box-shadow: var(--shadow-md);
+      transform: translateY(-2px);
     }
 
     .transaction-item:active {
-      transform: scale(0.98);
+      transform: translateY(0) scale(0.98);
     }
 
     .transaction-left {
@@ -377,16 +419,22 @@
     /* 자산 카드 - 새로운 디자인 */
     .asset-card {
       background: white;
-      border-radius: 12px;
-      padding: 20px;
+      border-radius: 16px;
+      padding: 24px;
       margin-bottom: 12px;
-      box-shadow: 0 2px 8px rgba(0,0,0,0.06);
+      box-shadow: var(--shadow);
+      border: 1px solid var(--gray-100);
       cursor: pointer;
-      transition: all 0.2s;
+      transition: all 0.2s ease;
+    }
+
+    .asset-card:hover {
+      box-shadow: var(--shadow-md);
+      transform: translateY(-2px);
     }
 
     .asset-card:active {
-      transform: scale(0.98);
+      transform: translateY(0) scale(0.98);
     }
 
     .asset-header {
@@ -443,22 +491,25 @@
     /* 차트 */
     .chart {
       background: white;
-      border-radius: 12px;
-      padding: 20px;
-      margin-bottom: 16px;
-      box-shadow: 0 2px 8px rgba(0,0,0,0.06);
+      border-radius: 16px;
+      padding: 24px;
+      margin-bottom: 12px;
+      box-shadow: var(--shadow);
+      border: 1px solid var(--gray-100);
     }
 
     .chart-title {
-      font-size: 15px;
+      font-size: 16px;
       font-weight: 700;
-      margin-bottom: 16px;
+      margin-bottom: 20px;
       color: var(--gray-900);
+      letter-spacing: -0.3px;
     }
 
     .chart-canvas {
       width: 100%;
-      height: 250px;
+      height: 250px !important;
+      max-height: 250px !important;
     }
 
     .bar-chart {
@@ -519,18 +570,23 @@
 
     .search-input {
       width: 100%;
-      padding: 12px 16px;
-      border: 1px solid var(--gray-200);
-      border-radius: 12px;
+      padding: 14px 18px;
+      border: 2px solid var(--gray-100);
+      border-radius: 14px;
       font-size: 14px;
       background: white;
-      box-shadow: 0 2px 8px rgba(0,0,0,0.06);
-      transition: all 0.2s;
+      box-shadow: var(--shadow-sm);
+      transition: all 0.2s ease;
     }
 
     .search-input:focus {
       outline: none;
       border-color: var(--primary);
+      box-shadow: var(--shadow-md);
+    }
+
+    .search-input::placeholder {
+      color: var(--gray-400);
     }
 
     /* 필터 버튼 그룹 */
@@ -543,23 +599,29 @@
     }
 
     .filter-btn {
-      padding: 8px 16px;
+      padding: 10px 18px;
       background: white;
-      border: 1px solid var(--gray-200);
-      border-radius: 20px;
-      font-size: 14px;
-      font-weight: 600;
+      border: 2px solid var(--gray-100);
+      border-radius: 24px;
+      font-size: 13px;
+      font-weight: 700;
       white-space: nowrap;
       cursor: pointer;
-      color: var(--gray-700);
-      transition: all 0.2s;
-      box-shadow: 0 2px 8px rgba(0,0,0,0.06);
+      color: var(--gray-600);
+      transition: all 0.2s ease;
+      box-shadow: var(--shadow-sm);
+    }
+
+    .filter-btn:hover {
+      border-color: var(--primary-light);
+      color: var(--primary);
     }
 
     .filter-btn.active {
-      background: var(--primary);
+      background: linear-gradient(135deg, var(--primary) 0%, var(--primary-dark) 100%);
       color: white;
       border-color: var(--primary);
+      box-shadow: var(--shadow);
     }
 
     /* 하단 탭바 */
@@ -569,13 +631,15 @@
       left: 0;
       right: 0;
       background: white;
-      border-top: 1px solid var(--gray-200);
+      border-top: 1px solid var(--gray-100);
       display: flex;
-      padding: 8px 0 calc(8px + env(safe-area-inset-bottom));
+      padding: 10px 0 calc(10px + env(safe-area-inset-bottom));
       z-index: 100;
       max-width: 480px;
       margin: 0 auto;
-      box-shadow: 0 -2px 8px rgba(0,0,0,0.05);
+      box-shadow: var(--shadow-lg);
+      backdrop-filter: blur(10px);
+      background: rgba(255, 255, 255, 0.95);
     }
 
     .nav-item {
@@ -583,16 +647,29 @@
       display: flex;
       flex-direction: column;
       align-items: center;
-      padding: 6px 0;
+      padding: 8px 0;
       background: none;
       border: none;
       cursor: pointer;
-      color: var(--gray-500);
-      transition: color 0.2s;
+      color: var(--gray-400);
+      transition: all 0.2s ease;
+      position: relative;
     }
 
     .nav-item.active {
       color: var(--primary);
+    }
+
+    .nav-item.active::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 32px;
+      height: 3px;
+      background: var(--primary);
+      border-radius: 0 0 3px 3px;
     }
 
     .nav-icon {
@@ -600,6 +677,11 @@
       display: flex;
       align-items: center;
       justify-content: center;
+      transition: transform 0.2s ease;
+    }
+
+    .nav-item.active .nav-icon {
+      transform: scale(1.1);
     }
 
     .nav-icon svg {
@@ -609,29 +691,38 @@
 
     .nav-label {
       font-size: 11px;
-      font-weight: 600;
+      font-weight: 700;
+      letter-spacing: 0.3px;
     }
 
     /* 플로팅 버튼 */
     .fab {
       position: fixed;
-      bottom: calc(80px + env(safe-area-inset-bottom));
+      bottom: calc(85px + env(safe-area-inset-bottom));
       right: 20px;
-      width: 56px;
-      height: 56px;
+      width: 60px;
+      height: 60px;
       border-radius: 50%;
-      background: var(--primary);
+      background: linear-gradient(135deg, var(--primary) 0%, var(--primary-dark) 100%);
       color: white;
       border: none;
-      font-size: 24px;
-      box-shadow: 0 4px 12px rgba(49, 130, 246, 0.4);
+      font-size: 28px;
+      box-shadow: var(--shadow-lg);
       cursor: pointer;
       z-index: 99;
-      transition: all 0.2s;
+      transition: all 0.2s ease;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .fab:hover {
+      transform: scale(1.05);
+      box-shadow: 0 6px 20px rgba(108, 93, 211, 0.4);
     }
 
     .fab:active {
-      transform: scale(0.9);
+      transform: scale(0.95);
     }
 
     /* 모달 */
@@ -831,50 +922,64 @@
     /* 버튼 */
     .btn {
       width: 100%;
-      padding: 14px;
+      padding: 16px;
       border: none;
-      border-radius: 12px;
-      font-size: 14px;
+      border-radius: 14px;
+      font-size: 15px;
       font-weight: 700;
       cursor: pointer;
       margin-top: 12px;
-      transition: all 0.2s;
+      transition: all 0.2s ease;
+      box-shadow: var(--shadow-sm);
     }
 
     .btn-primary {
-      background: var(--primary);
+      background: linear-gradient(135deg, var(--primary) 0%, var(--primary-dark) 100%);
       color: white;
     }
 
+    .btn-primary:hover {
+      box-shadow: var(--shadow-md);
+      transform: translateY(-2px);
+    }
+
     .btn-primary:active {
-      background: var(--primary-dark);
-      transform: scale(0.98);
+      transform: translateY(0) scale(0.98);
     }
 
     .btn-secondary {
-      background: var(--gray-100);
-      color: var(--gray-900);
+      background: white;
+      color: var(--gray-700);
+      border: 2px solid var(--gray-200);
+      box-shadow: none;
+    }
+
+    .btn-secondary:hover {
+      border-color: var(--primary);
+      color: var(--primary);
     }
 
     .btn-secondary:active {
-      background: var(--gray-200);
+      background: var(--gray-50);
       transform: scale(0.98);
     }
 
     /* 설정 페이지 - 개선된 UI */
     .settings-section {
       background: white;
-      border-radius: 12px;
-      padding: 20px;
-      margin-bottom: 16px;
-      box-shadow: 0 2px 8px rgba(0,0,0,0.06);
+      border-radius: 16px;
+      padding: 24px;
+      margin-bottom: 12px;
+      box-shadow: var(--shadow);
+      border: 1px solid var(--gray-100);
     }
 
     .settings-title {
-      font-size: 15px;
+      font-size: 16px;
       font-weight: 700;
-      margin-bottom: 16px;
+      margin-bottom: 18px;
       color: var(--gray-900);
+      letter-spacing: -0.3px;
     }
 
     .settings-item-card {
@@ -966,27 +1071,36 @@
 
     /* 동기화 버튼 */
     .sync-button {
-      background: white;
-      border-radius: 12px;
-      padding: 16px;
+      background: linear-gradient(135deg, var(--primary) 0%, var(--primary-dark) 100%);
+      border-radius: 14px;
+      padding: 18px;
       margin-bottom: 16px;
-      box-shadow: 0 2px 8px rgba(0,0,0,0.06);
+      box-shadow: var(--shadow-md);
       display: flex;
       align-items: center;
       justify-content: center;
-      gap: 8px;
+      gap: 10px;
       cursor: pointer;
-      transition: all 0.2s;
+      transition: all 0.2s ease;
       border: none;
       width: 100%;
-      font-size: 14px;
-      font-weight: 600;
-      color: var(--gray-900);
+      font-size: 15px;
+      font-weight: 700;
+      color: white;
+    }
+
+    .sync-button:hover {
+      transform: translateY(-2px);
+      box-shadow: var(--shadow-lg);
     }
 
     .sync-button:active {
-      transform: scale(0.98);
-      background: var(--gray-50);
+      transform: translateY(0) scale(0.98);
+    }
+
+    .sync-button:disabled {
+      opacity: 0.6;
+      cursor: not-allowed;
     }
   </style>
 </head>
@@ -2461,15 +2575,21 @@
       });
       document.querySelector(`[data-tab="${tabName}"]`).classList.add('active');
 
+      // 월간 요약을 달력 탭에만 표시
+      const summaryElement = document.querySelector('.summary');
       if (tabName === 'calendar') {
+        summaryElement.style.display = 'block';
         renderCalendar();
         renderSelectedDateTransactions(state.selectedDate);
-      } else if (tabName === 'log') {
-        renderTransactionList();
-      } else if (tabName === 'assets') {
-        renderAssetsList();
-      } else if (tabName === 'stats') {
-        renderStats();
+      } else {
+        summaryElement.style.display = 'none';
+        if (tabName === 'log') {
+          renderTransactionList();
+        } else if (tabName === 'assets') {
+          renderAssetsList();
+        } else if (tabName === 'stats') {
+          renderStats();
+        }
       }
     }
 
@@ -2626,9 +2746,42 @@
 
       // 동기화
       document.getElementById('syncData').addEventListener('click', async () => {
-        await saveToSupabase();
-        await loadFromSupabase();
-        renderAll();
+        const button = document.getElementById('syncData');
+        const originalText = button.innerHTML;
+
+        try {
+          button.disabled = true;
+          button.innerHTML = '<span>🔄</span><span>동기화 중...</span>';
+          button.style.opacity = '0.6';
+
+          await saveToSupabase();
+          await loadFromSupabase();
+          renderAll();
+
+          // 성공 피드백
+          button.innerHTML = '<span>✓</span><span>동기화 완료!</span>';
+          button.style.background = 'var(--success)';
+
+          setTimeout(() => {
+            button.innerHTML = originalText;
+            button.style.background = '';
+            button.style.opacity = '';
+            button.disabled = false;
+          }, 2000);
+        } catch (error) {
+          // 실패 피드백
+          button.innerHTML = '<span>✕</span><span>동기화 실패</span>';
+          button.style.background = 'var(--danger)';
+
+          setTimeout(() => {
+            button.innerHTML = originalText;
+            button.style.background = '';
+            button.style.opacity = '';
+            button.disabled = false;
+          }, 2000);
+
+          console.error('동기화 오류:', error);
+        }
       });
 
       // 결제수단/자산/카테고리 추가
