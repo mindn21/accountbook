@@ -80,14 +80,14 @@
 
     /* 탭 제목 */
     .tab-title {
-      background: white;
-      padding: max(20px, env(safe-area-inset-top)) 16px 16px;
-      box-shadow: 0 1px 3px rgba(0,0,0,0.08);
+      background: transparent;
+      padding: max(20px, env(safe-area-inset-top)) 16px 12px;
+      box-shadow: none;
     }
 
     .tab-title h2 {
-      font-size: 20px;
-      font-weight: 700;
+      font-size: 18px;
+      font-weight: 600;
       color: var(--gray-900);
       margin: 0;
       letter-spacing: -0.5px;
@@ -363,6 +363,37 @@
       overflow-y: auto;
     }
 
+    .calendar-transaction-card {
+      background: white;
+      border-radius: 8px;
+      padding: 0;
+      box-shadow: 0 1px 3px rgba(0,0,0,0.08);
+    }
+
+    .calendar-transaction-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 12px 16px;
+      border-bottom: 1px solid var(--gray-100);
+    }
+
+    .calendar-transaction-row:last-child {
+      border-bottom: none;
+    }
+
+    .calendar-transaction-info {
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+      flex: 1;
+    }
+
+    .transaction-memo {
+      font-size: 13px;
+      color: var(--gray-500);
+    }
+
     /* 거래 내역 리스트 */
     .transaction-list {
       display: flex;
@@ -444,7 +475,7 @@
     }
 
     .transaction-amount.expense {
-      color: var(--gray-900);
+      color: var(--danger);
     }
 
     .transaction-amount.transfer {
@@ -1908,8 +1939,32 @@
         return;
       }
 
-      let html = dayTransactions.map(t => renderTransactionItem(t, false)).join('');
+      // 모든 거래를 하나의 카드에 리스트로 표시
+      let html = '<div class="calendar-transaction-card">';
+      html += dayTransactions.map(t => renderCalendarTransactionItem(t)).join('');
+      html += '</div>';
       document.getElementById('calendarTransactionList').innerHTML = html;
+    }
+
+    function renderCalendarTransactionItem(t) {
+      const category = state.categories.find(c => c.id === t.categoryId);
+
+      const amountClass = t.type === 'income' ? 'income' : (t.type === 'expense' ? 'expense' : 'transfer');
+      const amountPrefix = t.type === 'income' ? '+' : (t.type === 'expense' ? '-' : '');
+
+      const categoryDisplay = category ? (category.icon ? `${category.icon} ${category.name}` : category.name) : (t.type === 'transfer' ? '자산이동' : '');
+
+      return `
+        <div class="calendar-transaction-row">
+          <div class="calendar-transaction-info">
+            <div class="transaction-category">${categoryDisplay}</div>
+            ${t.memo ? `<div class="transaction-memo">${t.memo}</div>` : ''}
+          </div>
+          <div class="transaction-amount ${amountClass}">
+            ${amountPrefix}${formatMoney(t.amount)}
+          </div>
+        </div>
+      `;
     }
 
     function renderTransactionList() {
