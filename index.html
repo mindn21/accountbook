@@ -28,8 +28,8 @@
       --success: #00C9A7;
       --danger: #FF6B6B;
       --warning: #FFB84D;
-      --gray-50: #FAFBFC;
-      --gray-100: #F3F4F6;
+      --gray-50: #F3F4F6;
+      --gray-100: #E8EBF0;
       --gray-200: #E5E7EB;
       --gray-300: #D1D5DB;
       --gray-400: #9CA3AF;
@@ -76,6 +76,21 @@
     /* 달력 탭이 아닐 때 헤더 숨기기 */
     body:not([data-active-tab="calendar"]) .header {
       display: none;
+    }
+
+    /* 탭 제목 */
+    .tab-title {
+      background: white;
+      padding: max(20px, env(safe-area-inset-top)) 16px 16px;
+      box-shadow: 0 1px 3px rgba(0,0,0,0.08);
+    }
+
+    .tab-title h2 {
+      font-size: 20px;
+      font-weight: 700;
+      color: var(--gray-900);
+      margin: 0;
+      letter-spacing: -0.5px;
     }
 
     .header h1 {
@@ -272,6 +287,11 @@
       box-shadow: var(--shadow);
     }
 
+    /* 다른 날짜가 선택되었을 때 오늘 날짜를 연하게 */
+    body[data-has-selected="true"] .calendar-day.today:not(.selected) {
+      opacity: 0.4;
+    }
+
     .calendar-day.selected {
       background: linear-gradient(135deg, var(--primary-dark) 0%, var(--primary) 100%);
       color: white;
@@ -281,6 +301,12 @@
     .calendar-day.today .calendar-day-number,
     .calendar-day.selected .calendar-day-number {
       color: white;
+    }
+
+    .calendar-day.today .calendar-day-income,
+    .calendar-day.selected .calendar-day-income {
+      color: white;
+      opacity: 0.95;
     }
 
     .calendar-day.today .calendar-day-expense,
@@ -302,6 +328,13 @@
 
     .calendar-day.sat .calendar-day-number {
       color: #6C5DD3;
+    }
+
+    .calendar-day-income {
+      font-size: 9px;
+      font-weight: 700;
+      color: var(--success);
+      white-space: nowrap;
     }
 
     .calendar-day-expense {
@@ -1066,6 +1099,20 @@
       background: rgba(255, 184, 77, 0.2);
     }
 
+    .icon-btn.reorder {
+      color: var(--gray-600);
+      border-color: var(--gray-300);
+      background: white;
+      font-size: 14px;
+      padding: 4px 8px;
+    }
+
+    .icon-btn.reorder:hover {
+      background: var(--gray-50);
+      color: var(--primary);
+      border-color: var(--primary);
+    }
+
     .icon-btn.edit {
       color: var(--primary);
       border-color: var(--primary);
@@ -1199,6 +1246,9 @@
 
       <!-- 내역 탭 -->
       <div class="tab-content" id="log-content">
+        <div class="tab-title">
+          <h2>내역</h2>
+        </div>
         <div class="search-bar">
           <input type="text" class="search-input" id="searchInput" placeholder="거래 내역 검색">
         </div>
@@ -1213,6 +1263,9 @@
 
       <!-- 자산 탭 -->
       <div class="tab-content" id="assets-content">
+        <div class="tab-title">
+          <h2>자산</h2>
+        </div>
         <div id="assetsList"></div>
         <button class="btn btn-secondary" id="transferAssetBtn">자산 이동</button>
         <button class="btn btn-secondary" id="setBudgetBtn">예산 설정</button>
@@ -1220,6 +1273,9 @@
 
       <!-- 통계 탭 -->
       <div class="tab-content" id="stats-content">
+        <div class="tab-title">
+          <h2>통계</h2>
+        </div>
         <div class="filter-buttons">
           <button class="filter-btn active" data-period="week">주간</button>
           <button class="filter-btn" data-period="month">월간</button>
@@ -1237,6 +1293,9 @@
 
       <!-- 설정 탭 -->
       <div class="tab-content" id="settings-content">
+        <div class="tab-title">
+          <h2>설정</h2>
+        </div>
         <!-- 수동 동기화 버튼 -->
         <button class="sync-button" id="syncData">
           <span>🔄</span>
@@ -1780,6 +1839,7 @@
         const dayOfWeek = current.getDay();
 
         const dayTransactions = state.transactions.filter(t => t.transactionDate === dateStr);
+        const income = dayTransactions.filter(t => t.type === 'income').reduce((sum, t) => sum + t.amount, 0);
         const expense = dayTransactions.filter(t => t.type === 'expense').reduce((sum, t) => sum + t.amount, 0);
 
         let className = 'calendar-day';
@@ -1792,6 +1852,7 @@
         html += `
           <div class="${className}" onclick="onCalendarDayClick('${dateStr}')" ondblclick="onCalendarDayDoubleClick('${dateStr}')">
             <div class="calendar-day-number">${current.getDate()}</div>
+            ${income > 0 ? `<div class="calendar-day-income">${formatAmount(income)}</div>` : ''}
             ${expense > 0 ? `<div class="calendar-day-expense">${formatAmount(expense)}</div>` : ''}
           </div>
         `;
@@ -1804,6 +1865,9 @@
 
     function onCalendarDayClick(dateStr) {
       state.selectedDate = dateStr;
+      const todayStr = formatDate(new Date());
+      // 오늘이 아닌 다른 날짜를 선택했을 때 body에 표시
+      document.body.setAttribute('data-has-selected', dateStr !== todayStr ? 'true' : 'false');
       renderCalendar();
       renderSelectedDateTransactions(dateStr);
     }
@@ -2256,9 +2320,11 @@
             <div class="item-meta">${method.isFavorite ? '즐겨찾기 • ' : ''}순서 ${method.displayOrder}</div>
           </div>
           <div class="item-actions">
+            <button class="icon-btn reorder" onclick="moveItemUp('paymentMethods', '${method.id}')">↑</button>
+            <button class="icon-btn reorder" onclick="moveItemDown('paymentMethods', '${method.id}')">↓</button>
             <button class="icon-btn ${method.isFavorite ? 'favorite' : ''}" onclick="toggleFavorite('paymentMethods', '${method.id}')">★</button>
-            <button class="icon-btn edit" onclick="editItem('paymentMethods', '${method.id}')">수정</button>
-            <button class="icon-btn delete" onclick="deleteItem('paymentMethods', '${method.id}')">삭제</button>
+            <button class="icon-btn edit" onclick="editItem('paymentMethods', '${method.id}')">edit</button>
+            <button class="icon-btn delete" onclick="deleteItem('paymentMethods', '${method.id}')">del</button>
           </div>
         </div>
       `).join('');
@@ -2274,9 +2340,11 @@
             <div class="item-meta">${asset.isFavorite ? '즐겨찾기 • ' : ''}순서 ${asset.displayOrder}</div>
           </div>
           <div class="item-actions">
+            <button class="icon-btn reorder" onclick="moveItemUp('assets', '${asset.id}')">↑</button>
+            <button class="icon-btn reorder" onclick="moveItemDown('assets', '${asset.id}')">↓</button>
             <button class="icon-btn ${asset.isFavorite ? 'favorite' : ''}" onclick="toggleFavorite('assets', '${asset.id}')">★</button>
-            <button class="icon-btn edit" onclick="editItem('assets', '${asset.id}')">수정</button>
-            <button class="icon-btn delete" onclick="deleteItem('assets', '${asset.id}')">삭제</button>
+            <button class="icon-btn edit" onclick="editItem('assets', '${asset.id}')">edit</button>
+            <button class="icon-btn delete" onclick="deleteItem('assets', '${asset.id}')">del</button>
           </div>
         </div>
       `).join('');
@@ -2297,9 +2365,11 @@
             <div class="item-meta">${cat.type === 'income' ? '수입' : '지출'} • ${cat.isFavorite ? '즐겨찾기 • ' : ''}순서 ${cat.displayOrder}</div>
           </div>
           <div class="item-actions">
+            <button class="icon-btn reorder" onclick="moveItemUp('categories', '${cat.id}')">↑</button>
+            <button class="icon-btn reorder" onclick="moveItemDown('categories', '${cat.id}')">↓</button>
             <button class="icon-btn ${cat.isFavorite ? 'favorite' : ''}" onclick="toggleFavorite('categories', '${cat.id}')">★</button>
-            <button class="icon-btn edit" onclick="editItem('categories', '${cat.id}')">수정</button>
-            <button class="icon-btn delete" onclick="deleteItem('categories', '${cat.id}')">삭제</button>
+            <button class="icon-btn edit" onclick="editItem('categories', '${cat.id}')">edit</button>
+            <button class="icon-btn delete" onclick="deleteItem('categories', '${cat.id}')">del</button>
           </div>
         </div>
       `;
@@ -2541,6 +2611,60 @@
         }
 
         renderAll();
+      }
+    }
+
+    function moveItemUp(type, id) {
+      const items = state[type];
+      const sorted = [...items].sort((a, b) => {
+        if (type === 'categories' && a.type !== b.type) {
+          return a.type === 'income' ? -1 : 1;
+        }
+        return a.displayOrder - b.displayOrder;
+      });
+
+      const index = sorted.findIndex(i => i.id === id);
+      if (index > 0) {
+        const temp = sorted[index].displayOrder;
+        sorted[index].displayOrder = sorted[index - 1].displayOrder;
+        sorted[index - 1].displayOrder = temp;
+
+        saveData();
+
+        if (type === 'paymentMethods') {
+          renderPaymentMethodsSettings();
+        } else if (type === 'assets') {
+          renderAssetsSettings();
+        } else if (type === 'categories') {
+          renderCategoriesSettings();
+        }
+      }
+    }
+
+    function moveItemDown(type, id) {
+      const items = state[type];
+      const sorted = [...items].sort((a, b) => {
+        if (type === 'categories' && a.type !== b.type) {
+          return a.type === 'income' ? -1 : 1;
+        }
+        return a.displayOrder - b.displayOrder;
+      });
+
+      const index = sorted.findIndex(i => i.id === id);
+      if (index < sorted.length - 1) {
+        const temp = sorted[index].displayOrder;
+        sorted[index].displayOrder = sorted[index + 1].displayOrder;
+        sorted[index + 1].displayOrder = temp;
+
+        saveData();
+
+        if (type === 'paymentMethods') {
+          renderPaymentMethodsSettings();
+        } else if (type === 'assets') {
+          renderAssetsSettings();
+        } else if (type === 'categories') {
+          renderCategoriesSettings();
+        }
       }
     }
 
