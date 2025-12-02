@@ -333,13 +333,13 @@
     .transaction-list {
       display: flex;
       flex-direction: column;
-      gap: 10px;
+      gap: 8px;
     }
 
     .transaction-item {
       background: white;
-      border-radius: 14px;
-      padding: 18px;
+      border-radius: 12px;
+      padding: 12px 14px;
       display: flex;
       justify-content: space-between;
       align-items: center;
@@ -389,12 +389,13 @@
       font-weight: 600;
       color: var(--gray-900);
       letter-spacing: -0.3px;
+      margin-top: 6px;
     }
 
     .transaction-method {
       font-size: 12px;
       color: var(--gray-500);
-      margin-top: 4px;
+      margin-top: 3px;
       font-weight: 500;
     }
 
@@ -985,20 +986,21 @@
     .settings-item-card {
       display: flex;
       align-items: center;
-      padding: 12px;
+      padding: 14px 16px;
       background: var(--gray-50);
-      border-radius: 10px;
+      border-radius: 12px;
       margin-bottom: 8px;
       transition: all 0.2s;
+      border: 1px solid transparent;
+    }
+
+    .settings-item-card:hover {
+      background: white;
+      border-color: var(--gray-200);
     }
 
     .settings-item-card:last-child {
       margin-bottom: 0;
-    }
-
-    .item-icon {
-      font-size: 24px;
-      margin-right: 12px;
     }
 
     .item-content {
@@ -1006,14 +1008,14 @@
     }
 
     .item-name {
-      font-size: 14px;
+      font-size: 15px;
       font-weight: 600;
       color: var(--gray-900);
-      margin-bottom: 2px;
+      margin-bottom: 3px;
     }
 
     .item-meta {
-      font-size: 11px;
+      font-size: 12px;
       color: var(--gray-500);
       font-weight: 500;
     }
@@ -1025,22 +1027,58 @@
 
     .icon-btn {
       background: white;
-      border: 1px solid var(--gray-200);
-      font-size: 14px;
+      border: 1.5px solid var(--gray-200);
+      font-size: 12px;
+      font-weight: 600;
       cursor: pointer;
-      padding: 6px;
-      border-radius: 6px;
-      width: 32px;
+      padding: 6px 10px;
+      border-radius: 8px;
       height: 32px;
       display: flex;
       align-items: center;
       justify-content: center;
-      transition: all 0.2s;
+      transition: all 0.2s ease;
+      color: var(--gray-600);
+      white-space: nowrap;
+    }
+
+    .icon-btn:hover {
+      background: var(--gray-50);
+      border-color: var(--gray-300);
     }
 
     .icon-btn:active {
-      background: var(--gray-100);
-      transform: scale(0.9);
+      transform: scale(0.95);
+    }
+
+    .icon-btn.favorite {
+      color: var(--warning);
+      border-color: var(--warning);
+      background: rgba(255, 184, 77, 0.1);
+    }
+
+    .icon-btn.favorite:hover {
+      background: rgba(255, 184, 77, 0.2);
+    }
+
+    .icon-btn.edit {
+      color: var(--primary);
+      border-color: var(--primary);
+      background: rgba(108, 93, 211, 0.05);
+    }
+
+    .icon-btn.edit:hover {
+      background: rgba(108, 93, 211, 0.1);
+    }
+
+    .icon-btn.delete {
+      color: var(--danger);
+      border-color: var(--danger);
+      background: rgba(255, 107, 107, 0.05);
+    }
+
+    .icon-btn.delete:hover {
+      background: rgba(255, 107, 107, 0.1);
     }
 
     /* 자산 이동 */
@@ -2208,15 +2246,14 @@
       const sorted = [...state.paymentMethods].sort((a, b) => a.displayOrder - b.displayOrder);
       const html = sorted.map(method => `
         <div class="settings-item-card">
-          <div class="item-icon">💳</div>
           <div class="item-content">
             <div class="item-name">${method.name}</div>
             <div class="item-meta">${method.isFavorite ? '즐겨찾기 • ' : ''}순서 ${method.displayOrder}</div>
           </div>
           <div class="item-actions">
-            <button class="icon-btn" onclick="toggleFavorite('paymentMethods', '${method.id}')">${method.isFavorite ? '⭐' : '☆'}</button>
-            <button class="icon-btn" onclick="editItem('paymentMethods', '${method.id}')">✏️</button>
-            <button class="icon-btn" onclick="deleteItem('paymentMethods', '${method.id}')">🗑️</button>
+            <button class="icon-btn ${method.isFavorite ? 'favorite' : ''}" onclick="toggleFavorite('paymentMethods', '${method.id}')">★</button>
+            <button class="icon-btn edit" onclick="editItem('paymentMethods', '${method.id}')">수정</button>
+            <button class="icon-btn delete" onclick="deleteItem('paymentMethods', '${method.id}')">삭제</button>
           </div>
         </div>
       `).join('');
@@ -2227,15 +2264,14 @@
       const sorted = [...state.assets].sort((a, b) => a.displayOrder - b.displayOrder);
       const html = sorted.map(asset => `
         <div class="settings-item-card">
-          <div class="item-icon">🏦</div>
           <div class="item-content">
             <div class="item-name">${asset.name}</div>
             <div class="item-meta">${asset.isFavorite ? '즐겨찾기 • ' : ''}순서 ${asset.displayOrder}</div>
           </div>
           <div class="item-actions">
-            <button class="icon-btn" onclick="toggleFavorite('assets', '${asset.id}')">${asset.isFavorite ? '⭐' : '☆'}</button>
-            <button class="icon-btn" onclick="editItem('assets', '${asset.id}')">✏️</button>
-            <button class="icon-btn" onclick="deleteItem('assets', '${asset.id}')">🗑️</button>
+            <button class="icon-btn ${asset.isFavorite ? 'favorite' : ''}" onclick="toggleFavorite('assets', '${asset.id}')">★</button>
+            <button class="icon-btn edit" onclick="editItem('assets', '${asset.id}')">수정</button>
+            <button class="icon-btn delete" onclick="deleteItem('assets', '${asset.id}')">삭제</button>
           </div>
         </div>
       `).join('');
@@ -2249,18 +2285,16 @@
       });
 
       const html = sorted.map(cat => {
-        const displayName = cat.icon ? `${cat.icon} ${cat.name}` : cat.name;
         return `
         <div class="settings-item-card">
-          <div class="item-icon">${cat.icon || '📁'}</div>
           <div class="item-content">
-            <div class="item-name">${displayName}</div>
+            <div class="item-name">${cat.name}</div>
             <div class="item-meta">${cat.type === 'income' ? '수입' : '지출'} • ${cat.isFavorite ? '즐겨찾기 • ' : ''}순서 ${cat.displayOrder}</div>
           </div>
           <div class="item-actions">
-            <button class="icon-btn" onclick="toggleFavorite('categories', '${cat.id}')">${cat.isFavorite ? '⭐' : '☆'}</button>
-            <button class="icon-btn" onclick="editItem('categories', '${cat.id}')">✏️</button>
-            <button class="icon-btn" onclick="deleteItem('categories', '${cat.id}')">🗑️</button>
+            <button class="icon-btn ${cat.isFavorite ? 'favorite' : ''}" onclick="toggleFavorite('categories', '${cat.id}')">★</button>
+            <button class="icon-btn edit" onclick="editItem('categories', '${cat.id}')">수정</button>
+            <button class="icon-btn delete" onclick="deleteItem('categories', '${cat.id}')">삭제</button>
           </div>
         </div>
       `;
@@ -2575,14 +2609,17 @@
       });
       document.querySelector(`[data-tab="${tabName}"]`).classList.add('active');
 
-      // 월간 요약을 달력 탭에만 표시
+      // 월간 요약과 월 선택기를 달력 탭에만 표시
       const summaryElement = document.querySelector('.summary');
+      const monthSelectorElement = document.querySelector('.month-selector');
       if (tabName === 'calendar') {
         summaryElement.style.display = 'block';
+        monthSelectorElement.style.display = 'flex';
         renderCalendar();
         renderSelectedDateTransactions(state.selectedDate);
       } else {
         summaryElement.style.display = 'none';
+        monthSelectorElement.style.display = 'none';
         if (tabName === 'log') {
           renderTransactionList();
         } else if (tabName === 'assets') {
