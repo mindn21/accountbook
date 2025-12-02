@@ -73,6 +73,11 @@
       box-shadow: var(--shadow-md);
     }
 
+    /* 달력 탭이 아닐 때 헤더 숨기기 */
+    body:not([data-active-tab="calendar"]) .header {
+      display: none;
+    }
+
     .header h1 {
       font-size: 22px;
       font-weight: 700;
@@ -1142,7 +1147,7 @@
     }
   </style>
 </head>
-<body>
+<body data-active-tab="calendar">
   <div class="container">
     <!-- 헤더 -->
     <div class="header">
@@ -2609,9 +2614,13 @@
       });
       document.querySelector(`[data-tab="${tabName}"]`).classList.add('active');
 
+      // body에 현재 활성 탭 설정 (헤더 표시/숨김 제어)
+      document.body.setAttribute('data-active-tab', tabName);
+
       // 월간 요약과 월 선택기를 달력 탭에만 표시
       const summaryElement = document.querySelector('.summary');
       const monthSelectorElement = document.querySelector('.month-selector');
+
       if (tabName === 'calendar') {
         summaryElement.style.display = 'block';
         monthSelectorElement.style.display = 'flex';
