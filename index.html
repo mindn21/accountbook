@@ -1021,6 +1021,22 @@
       letter-spacing: -0.3px;
     }
 
+    .connection-status {
+      padding: 12px 16px;
+      border-radius: 8px;
+      font-size: 13px;
+      font-weight: 600;
+      margin-bottom: 16px;
+      background: var(--gray-100);
+      color: var(--gray-600);
+      text-align: center;
+    }
+
+    .connection-status.connected {
+      background: rgba(0, 201, 167, 0.1);
+      color: var(--success);
+    }
+
     .settings-item-card {
       display: flex;
       align-items: center;
@@ -1297,10 +1313,25 @@
           <h2>설정</h2>
         </div>
         <!-- 수동 동기화 버튼 -->
-        <button class="sync-button" id="syncData">
+        <button class="sync-button" id="syncData" style="display: none;">
           <span>🔄</span>
           <span>수동 동기화</span>
         </button>
+
+        <div class="settings-section">
+          <div class="settings-title">Supabase 연결</div>
+          <div class="connection-status" id="connectionStatus">로컬 저장소 사용 중</div>
+          <div class="form-group">
+            <label class="form-label">Supabase URL</label>
+            <input type="text" class="form-input" id="supabaseUrl" placeholder="https://xxx.supabase.co">
+          </div>
+          <div class="form-group">
+            <label class="form-label">Supabase Key</label>
+            <input type="password" class="form-input" id="supabaseKey" placeholder="anon public key">
+          </div>
+          <button class="btn btn-primary" id="connectSupabase">연결하기</button>
+          <button class="btn btn-secondary" id="disconnectSupabase" style="display: none;">연결 해제</button>
+        </div>
 
         <div class="settings-section">
           <div class="settings-title">결제수단 관리</div>
@@ -1672,6 +1703,8 @@
           assets: state.assets,
           categories: state.categories,
           transactions: state.transactions,
+          monthly_budget: state.monthlyBudget,
+          category_budgets: state.categoryBudgets,
           updated_at: new Date().toISOString()
         };
 
@@ -1694,8 +1727,7 @@
           if (updateError) {
             console.error('Supabase 업데이트 실패:', updateError);
           } else {
-            console.log('✅ Supabase 저장 완료');
-            alert('동기화 완료!');
+            console.log('✅ Supabase 자동 저장 완료');
           }
         } else {
           const { error: insertError } = await state.supabaseClient
@@ -1705,13 +1737,11 @@
           if (insertError) {
             console.error('Supabase 삽입 실패:', insertError);
           } else {
-            console.log('✅ Supabase 저장 완료');
-            alert('동기화 완료!');
+            console.log('✅ Supabase 자동 저장 완료');
           }
         }
       } catch (error) {
         console.error('Supabase 저장 실패:', error);
-        alert('동기화 실패: ' + error.message);
       }
     }
 
@@ -1758,6 +1788,8 @@
           state.assets = loadedData.assets || state.assets;
           state.categories = loadedData.categories || state.categories;
           state.transactions = loadedData.transactions || [];
+          state.monthlyBudget = loadedData.monthly_budget || 0;
+          state.categoryBudgets = loadedData.category_budgets || {};
 
           saveLocalData();
           console.log('✅ Supabase 데이터 로드 완료');
@@ -2779,21 +2811,35 @@
     // ============================================
     // 초기화
     // ============================================
-    document.addEventListener('DOMContentLoaded', () => {
+    document.addEventListener('DOMContentLoaded', async () => {
       loadData();
       renderAll();
 
-      // Supabase 초기화 (기본값 사용)
-      try {
-        if (typeof supabase !== 'undefined') {
-          state.supabaseClient = supabase.createClient(
-            'https://zmnzfeicabvquwbxgjwt.supabase.co',
-            'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Inptbnpmei1jYWJ2cXV3Yngand3dCIsInJvbGUiOiJhbm9uIiwiaWF0IjoxNzM0MzgzNzAwLCJleHAiOjIwNDk5NTk3MDB9.sb_publishable_EUBiU6pKPHdimu-roGXrag_CK9rWVdm'
-          );
-          state.useLocalStorage = false;
+      // Supabase 연결 정보 localStorage에서 복원
+      const savedSupabaseUrl = localStorage.getItem('supabase_url');
+      const savedSupabaseKey = localStorage.getItem('supabase_key');
+
+      if (savedSupabaseUrl && savedSupabaseKey) {
+        try {
+          if (typeof supabase !== 'undefined') {
+            state.supabaseClient = supabase.createClient(savedSupabaseUrl, savedSupabaseKey);
+            state.useLocalStorage = false;
+
+            document.getElementById('supabaseUrl').value = savedSupabaseUrl;
+            document.getElementById('supabaseKey').value = savedSupabaseKey;
+            document.getElementById('connectionStatus').textContent = 'Supabase 연결됨';
+            document.getElementById('connectionStatus').classList.add('connected');
+            document.getElementById('syncData').style.display = 'block';
+            document.getElementById('disconnectSupabase').style.display = 'inline-block';
+
+            // 자동으로 최신 데이터 로드
+            await loadFromSupabase();
+            renderAll();
+            console.log('✅ Supabase 자동 연결 완료');
+          }
+        } catch (error) {
+          console.error('Supabase 자동 연결 실패:', error);
         }
-      } catch (error) {
-        console.error('Supabase 초기화 실패:', error);
       }
 
       // 월 변경
@@ -2955,6 +3001,65 @@
       });
 
       // 결제수단/자산/카테고리 추가
+      // Supabase 연결
+      document.getElementById('connectSupabase').addEventListener('click', async () => {
+        const url = document.getElementById('supabaseUrl').value.trim();
+        const key = document.getElementById('supabaseKey').value.trim();
+
+        if (!url || !key) {
+          alert('Supabase URL과 Key를 모두 입력해주세요.');
+          return;
+        }
+
+        try {
+          if (typeof supabase === 'undefined') {
+            alert('Supabase 라이브러리를 로드할 수 없습니다. 인터넷 연결을 확인해주세요.');
+            return;
+          }
+
+          state.supabaseClient = supabase.createClient(url, key);
+          state.useLocalStorage = false;
+
+          // localStorage에 연결 정보 저장
+          localStorage.setItem('supabase_url', url);
+          localStorage.setItem('supabase_key', key);
+
+          document.getElementById('connectionStatus').textContent = 'Supabase 연결됨';
+          document.getElementById('connectionStatus').classList.add('connected');
+          document.getElementById('syncData').style.display = 'block';
+          document.getElementById('disconnectSupabase').style.display = 'inline-block';
+
+          // 연결 후 최신 데이터 자동 로드
+          await loadFromSupabase();
+          renderAll();
+
+          alert('Supabase에 연결되었습니다!\n\n자동 동기화가 활성화되었습니다.');
+        } catch (error) {
+          console.error('Supabase 연결 실패:', error);
+          alert('Supabase 연결에 실패했습니다: ' + error.message);
+        }
+      });
+
+      // Supabase 연결 해제
+      document.getElementById('disconnectSupabase').addEventListener('click', () => {
+        if (!confirm('Supabase 연결을 해제하시겠습니까?\n로컬 저장소만 사용하게 됩니다.')) return;
+
+        state.supabaseClient = null;
+        state.useLocalStorage = true;
+
+        localStorage.removeItem('supabase_url');
+        localStorage.removeItem('supabase_key');
+
+        document.getElementById('supabaseUrl').value = '';
+        document.getElementById('supabaseKey').value = '';
+        document.getElementById('connectionStatus').textContent = '로컬 저장소 사용 중';
+        document.getElementById('connectionStatus').classList.remove('connected');
+        document.getElementById('syncData').style.display = 'none';
+        document.getElementById('disconnectSupabase').style.display = 'none';
+
+        alert('Supabase 연결이 해제되었습니다.');
+      });
+
       document.getElementById('addPaymentMethod').addEventListener('click', () => addNewItem('paymentMethods'));
       document.getElementById('addAsset').addEventListener('click', () => addNewItem('assets'));
       document.getElementById('addCategory').addEventListener('click', () => {
