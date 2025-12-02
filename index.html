@@ -225,23 +225,25 @@
     .calendar {
       background: white;
       border-radius: 0;
-      padding: 20px 12px;
+      padding: 16px;
       margin-bottom: 0;
       box-shadow: var(--shadow-sm);
+      overflow: hidden;
     }
 
     .calendar-grid {
       display: grid;
       grid-template-columns: repeat(7, 1fr);
-      gap: 6px;
+      gap: 4px;
+      max-width: 100%;
     }
 
     .calendar-day-header {
       text-align: center;
-      padding: 12px 0 10px;
-      font-size: 11px;
+      padding: 8px 0;
+      font-size: 10px;
       color: var(--gray-400);
-      font-weight: 700;
+      font-weight: 600;
       text-transform: uppercase;
       letter-spacing: 0.5px;
     }
@@ -256,21 +258,21 @@
 
     .calendar-day {
       aspect-ratio: 1;
-      border-radius: 10px;
-      padding: 8px 4px;
+      border-radius: 50%;
       display: flex;
       flex-direction: column;
       align-items: center;
-      justify-content: flex-start;
+      justify-content: center;
       cursor: pointer;
-      transition: all 0.15s ease;
+      transition: all 0.2s ease;
       position: relative;
       background: transparent;
+      min-height: 0;
     }
 
     .calendar-day:hover {
       background: var(--gray-100);
-      transform: scale(1.05);
+      transform: scale(1.1);
     }
 
     .calendar-day:active {
@@ -278,24 +280,25 @@
     }
 
     .calendar-day.other-month {
-      opacity: 0.25;
+      opacity: 0.3;
     }
 
     .calendar-day.today {
-      background: linear-gradient(135deg, var(--primary) 0%, var(--primary-light) 100%);
+      background: var(--primary);
       color: white;
-      box-shadow: var(--shadow);
+      box-shadow: 0 2px 8px rgba(108, 93, 211, 0.3);
     }
 
     /* 다른 날짜가 선택되었을 때 오늘 날짜를 연하게 */
     body[data-has-selected="true"] .calendar-day.today:not(.selected) {
-      opacity: 0.4;
+      opacity: 0.5;
     }
 
     .calendar-day.selected {
-      background: linear-gradient(135deg, var(--primary-dark) 0%, var(--primary) 100%);
+      background: var(--primary-dark);
       color: white;
-      box-shadow: var(--shadow-md);
+      box-shadow: 0 2px 12px rgba(108, 93, 211, 0.4);
+      transform: scale(1.05);
     }
 
     .calendar-day.today .calendar-day-number,
@@ -303,22 +306,9 @@
       color: white;
     }
 
-    .calendar-day.today .calendar-day-income,
-    .calendar-day.selected .calendar-day-income {
-      color: white;
-      opacity: 0.95;
-    }
-
-    .calendar-day.today .calendar-day-expense,
-    .calendar-day.selected .calendar-day-expense {
-      color: white;
-      opacity: 0.95;
-    }
-
     .calendar-day-number {
-      font-size: 15px;
-      font-weight: 700;
-      margin-bottom: 3px;
+      font-size: 13px;
+      font-weight: 600;
       color: var(--gray-900);
     }
 
@@ -330,18 +320,24 @@
       color: #6C5DD3;
     }
 
-    .calendar-day-income {
-      font-size: 9px;
-      font-weight: 700;
-      color: var(--success);
-      white-space: nowrap;
+    .calendar-day-dots {
+      display: flex;
+      gap: 3px;
+      margin-top: 2px;
     }
 
-    .calendar-day-expense {
-      font-size: 9px;
-      font-weight: 700;
-      color: var(--danger);
-      white-space: nowrap;
+    .calendar-day-dot {
+      width: 4px;
+      height: 4px;
+      border-radius: 50%;
+    }
+
+    .calendar-day-dot.income {
+      background: var(--success);
+    }
+
+    .calendar-day-dot.expense {
+      background: var(--danger);
     }
 
     /* 달력 하단 선택된 날짜의 거래 내역 */
@@ -1869,8 +1865,12 @@
         html += `
           <div class="${className}" onclick="onCalendarDayClick('${dateStr}')" ondblclick="onCalendarDayDoubleClick('${dateStr}')">
             <div class="calendar-day-number">${current.getDate()}</div>
-            ${income > 0 ? `<div class="calendar-day-income">${formatAmount(income)}</div>` : ''}
-            ${expense > 0 ? `<div class="calendar-day-expense">${formatAmount(expense)}</div>` : ''}
+            ${(income > 0 || expense > 0) ? `
+              <div class="calendar-day-dots">
+                ${income > 0 ? `<div class="calendar-day-dot income"></div>` : ''}
+                ${expense > 0 ? `<div class="calendar-day-dot expense"></div>` : ''}
+              </div>
+            ` : ''}
           </div>
         `;
 
