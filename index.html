@@ -2798,7 +2798,17 @@
       renderAll();
     }
 
-    function switchTab(tabName) {
+    async function switchTab(tabName) {
+      // 탭 전환 시 Supabase에서 최신 데이터 자동 로드
+      if (state.supabaseClient) {
+        try {
+          await loadFromSupabase();
+          console.log('✅ 탭 전환 시 데이터 동기화 완료');
+        } catch (error) {
+          console.error('탭 전환 시 동기화 실패:', error);
+        }
+      }
+
       document.querySelectorAll('.tab-content').forEach(tab => {
         tab.classList.remove('active');
       });
