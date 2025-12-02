@@ -382,6 +382,12 @@
       align-items: center;
       padding: 8px 12px;
       border-bottom: 1px solid var(--gray-100);
+      cursor: pointer;
+      transition: background 0.2s;
+    }
+
+    .calendar-transaction-row:hover {
+      background: var(--gray-50);
     }
 
     .calendar-transaction-row:last-child {
@@ -1660,6 +1666,7 @@
       selectedFromAsset: null,
       selectedToAsset: null,
       logFilter: 'all',
+      editingTransactionId: null,
 
       users: [
         { id: '1', name: '국환' },
@@ -2048,7 +2055,7 @@
       const categoryDisplay = category ? (category.icon ? `${category.icon} ${category.name}` : category.name) : (t.type === 'transfer' ? '자산이동' : '');
 
       return `
-        <div class="calendar-transaction-row">
+        <div class="calendar-transaction-row" onclick="openTransactionDetailModal('${t.id}')">
           <div class="calendar-transaction-info">
             <div class="transaction-category">${categoryDisplay}</div>
             ${t.memo ? `<div class="transaction-memo">${t.memo}</div>` : ''}
@@ -2736,20 +2743,41 @@
         return;
       }
 
-      const transaction = {
-        id: generateId(),
-        type: state.selectedType,
-        userId: state.selectedUser,
-        amount: amount,
-        categoryId: state.selectedCategory,
-        paymentMethodId: state.selectedPaymentMethod,
-        assetId: state.selectedAsset,
-        transactionDate: date,
-        memo: memo,
-        createdAt: new Date().toISOString()
-      };
+      // 수정 모드인 경우
+      if (state.editingTransactionId) {
+        const transactionIndex = state.transactions.findIndex(t => t.id === state.editingTransactionId);
+        if (transactionIndex !== -1) {
+          state.transactions[transactionIndex] = {
+            ...state.transactions[transactionIndex],
+            type: state.selectedType,
+            userId: state.selectedUser,
+            amount: amount,
+            categoryId: state.selectedCategory,
+            paymentMethodId: state.selectedPaymentMethod,
+            assetId: state.selectedAsset,
+            transactionDate: date,
+            memo: memo
+          };
+        }
+        state.editingTransactionId = null;
+        document.querySelector('#transactionModal .modal-title').textContent = '거래 추가';
+      } else {
+        // 새로운 거래 추가
+        const transaction = {
+          id: generateId(),
+          type: state.selectedType,
+          userId: state.selectedUser,
+          amount: amount,
+          categoryId: state.selectedCategory,
+          paymentMethodId: state.selectedPaymentMethod,
+          assetId: state.selectedAsset,
+          transactionDate: date,
+          memo: memo,
+          createdAt: new Date().toISOString()
+        };
+        state.transactions.push(transaction);
+      }
 
-      state.transactions.push(transaction);
       saveData();
       renderAll();
       closeModal('transactionModal');
@@ -2810,6 +2838,9 @@
       document.getElementById('transactionModal').classList.add('active');
       document.body.classList.add('modal-open');
 
+      // 수정 모드 설정
+      state.editingTransactionId = transactionId;
+
       // 기존 값 설정
       state.selectedUser = transaction.userId;
       state.selectedType = transaction.type;
@@ -2838,69 +2869,6 @@
 
       // 모달 제목 변경
       document.querySelector('#transactionModal .modal-title').textContent = '거래 수정';
-
-      // 저장 버튼을 수정 모드로 변경
-      const saveBtn = document.getElementById('saveTransaction');
-      saveBtn.textContent = '수정';
-      saveBtn.onclick = () => {
-        updateTransaction(transactionId);
-      };
-    }
-
-    function updateTransaction(transactionId) {
-      const amount = parseFormattedNumber(document.getElementById('amountInput').value);
-      const date = document.getElementById('dateInput').value;
-      const memo = document.getElementById('memoInput').value;
-
-      if (!amount || amount <= 0) {
-        alert('금액을 입력해주세요.');
-        return;
-      }
-
-      if (!state.selectedUser) {
-        alert('사용자를 선택해주세요.');
-        return;
-      }
-
-      if (!state.selectedCategory) {
-        alert('카테고리를 선택해주세요.');
-        return;
-      }
-
-      if (!state.selectedPaymentMethod) {
-        alert('결제수단을 선택해주세요.');
-        return;
-      }
-
-      if (!state.selectedAsset) {
-        alert('자산을 선택해주세요.');
-        return;
-      }
-
-      const transactionIndex = state.transactions.findIndex(t => t.id === transactionId);
-      if (transactionIndex === -1) return;
-
-      state.transactions[transactionIndex] = {
-        ...state.transactions[transactionIndex],
-        type: state.selectedType,
-        userId: state.selectedUser,
-        amount: amount,
-        categoryId: state.selectedCategory,
-        paymentMethodId: state.selectedPaymentMethod,
-        assetId: state.selectedAsset,
-        transactionDate: date,
-        memo: memo
-      };
-
-      saveData();
-      renderAll();
-      closeModal('transactionModal');
-
-      // 저장 버튼 원래대로 복구
-      const saveBtn = document.getElementById('saveTransaction');
-      saveBtn.textContent = '저장';
-      saveBtn.onclick = saveTransaction;
-      document.querySelector('#transactionModal .modal-title').textContent = '거래 추가';
     }
 
     function deleteTransaction(transactionId) {
@@ -3356,7 +3324,7 @@
       document.querySelectorAll('.modal-overlay').forEach(overlay => {
         overlay.addEventListener('click', (e) => {
           if (e.target === overlay) {
-            overlay.classList.remove('active');
+            closeModal(overlay.id);
           }
         });
       });
